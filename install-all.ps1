@@ -91,7 +91,6 @@ PROCESS {
                         Write-Host "Successfully downloaded runme-license.bat"
                     }
                 }
-                }
             }
 
             Remove-Item $tempFilePath
