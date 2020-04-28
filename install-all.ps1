@@ -65,7 +65,8 @@ PROCESS {
             Remove-Item $tempFilePath
         }
 
-        
+        PAUSE
+        EXIT
 
     }
 
