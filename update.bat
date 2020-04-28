@@ -1,0 +1,1 @@
+Powershell -NoProfile -ExecutionPolicy Bypass -Command "& {Start-Process Powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command ""%~dp0install-all.ps1 -UPDATE""' -Verb RunAs}"

@@ -1,0 +1,1 @@
+Powershell -NoProfile -ExecutionPolicy Bypass -Command "& {Start-Process Powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command ""%~dp0install-all.ps1 -Source64 MSI_list_64.txt -Source32 MSI_list_32.txt -DEFENDER -CLEANUP -LICENSE""' -Verb RunAs}"

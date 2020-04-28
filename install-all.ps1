@@ -1,4 +1,4 @@
-﻿<# v1.0.5
+﻿<# v1.0.6
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,14 +29,17 @@ Param(
 
 BEGIN {
 
+    $currentVersion = "1.0.6"
+    $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
+    Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
+    
 
 }
 
 PROCESS {
 
     if ($UPDATE) {
-        $currentVersion = "1.0.5"
 
         $currentFilePath = $PSCommandPath
         $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
@@ -59,7 +62,7 @@ PROCESS {
             Write-Host Current Version is: $currentVersion
             if ($tempVersionNumber -gt $currentVersioNumber) {
                 Copy-Item $tempFilePath $PSCommandPath
-                Write-Host Updated install-all.ps1 to $tempVersion
+                Write-Host Updated install-all.ps1 to $tempVersion -ForegroundColor Green
             }
 
             Remove-Item $tempFilePath
