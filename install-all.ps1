@@ -1,4 +1,4 @@
-﻿<#
+﻿<# v1.0.4
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -36,7 +36,7 @@ BEGIN {
 PROCESS {
 
     if ($UPDATE) {
-        $currentVersion = "v1.0.3"
+        $currentVersion = "1.0.4"
 
         $currentFilePath = $PSCommandPath
         $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
@@ -55,7 +55,7 @@ PROCESS {
             $tempVersion = (Get-Content $tempFilePath -First 1) -replace $versionOnlyPattern, ""
             $tempVersionNumber = $tempVersion -replace $numbersOnlyPattern, ""
             $currentVersioNumber = $currentVersion -replace $numbersOnlyPattern, ""
-            Write-Host Latest version is: v$tempVersion
+            Write-Host Latest version is: $tempVersion
             Write-Host Current Version is: $currentVersion
             if ($tempVersionNumber -gt $currentVersioNumber) {
                 Copy-Item $tempFilePath $PSCommandPath
