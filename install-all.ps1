@@ -1,4 +1,4 @@
-﻿<# v1.0.4
+﻿<# v1.0.5
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -36,7 +36,7 @@ BEGIN {
 PROCESS {
 
     if ($UPDATE) {
-        $currentVersion = "1.0.4"
+        $currentVersion = "1.0.5"
 
         $currentFilePath = $PSCommandPath
         $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
@@ -392,18 +392,11 @@ PROCESS {
 
         Catch {
         }
-        ForEach ($subkey in $subkeys) {
-            Try {
-                Remove-ItemProperty -Path HKLM:\$strKeyPath\$subkey -Name $strValueName | Out-Null
-            }
-            Catch {
-            }
-        }  
 
         #Write-Host "Running AUTOCLEAN"
         #Start-Process "cleanmgr.exe" -ArgumentList "/AUTOCLEAN" -PassThru -Wait
 
-        Start-Process "cleanmgr.exe" -ArgumentList "/VERYLOWDISK" -PassThru -Wait
+        #Start-Process "cleanmgr.exe" -ArgumentList "/VERYLOWDISK" -PassThru -Wait
 
         Write-Host "Disk cleanup tool completed"
 
@@ -488,10 +481,20 @@ PROCESS {
             {
                 Write-Host "Delete aborted, please do manual check and deletion."
             }
-
-
-            Write-Host "Clean Up Completed" -ForegroundColor Green
+            
         }
+
+        ForEach ($subkey in $subkeys) {
+            Try {
+                Remove-ItemProperty -Path HKLM:\$strKeyPath\$subkey -Name $strValueName | Out-Null
+            }
+            Catch {
+            }
+        }  
+
+
+        Write-Host "Clean Up Completed" -ForegroundColor Green
+
     }
 
 
