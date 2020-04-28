@@ -1,4 +1,4 @@
-﻿<# v1.0.7
+﻿<# v1.0.8
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.0.7"
+    $currentVersion = "1.0.8"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -43,6 +43,8 @@ PROCESS {
 
         $currentFilePath = $PSCommandPath
         $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
+        $runmePath = $PSScriptRoot + "/runme.bat"
+        $runmeLicPath = $PSScriptRoot + "/runme-license.bat"
         $numbersOnlyPattern = '[^0-9]'
         $versionOnlyPattern = '[^.0-9]'
 
@@ -64,8 +66,32 @@ PROCESS {
                 Copy-Item $tempFilePath $PSCommandPath
                 Write-Host Updated install-all.ps1 to $tempVersion -ForegroundColor Green
 
-                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat?token=AFRXBM5AWJ3IEQYIZXMKXRC6WHFGA" -OutFile ($PSScriptRoot + "/runme.bat")
-                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat?token=AFRXBM5DOQ3ILJJJULWW35S6WHFM4" -OutFile ($PSScriptRoot + "/runme-license.bat")
+                if (-not (Test-Path $runmePath)) {
+                    Try {
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat?token=AFRXBM5AWJ3IEQYIZXMKXRC6WHFGA" -OutFile $runmePath
+                    }
+                    Catch {
+                        Write-Error "Error downloading runme.bat"
+                    }
+
+                    if (Test-Path $runmePath) {
+                        Write-Host "Successfully downloaded runme.bat"
+                    }
+                }
+
+                if (-not (Test-Path $runmeLicPath)) {
+                    Try {
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat?token=AFRXBM5DOQ3ILJJJULWW35S6WHFM4" -OutFile $runmeLicPath
+                    } 
+                    Catch {
+                        Write-Error "Error downloading runme-license.bat"
+                    }
+
+                    if (Test-Path $runmeLicPath) {
+                        Write-Host "Successfully downloaded runme-license.bat"
+                    }
+                }
+                }
             }
 
             Remove-Item $tempFilePath
