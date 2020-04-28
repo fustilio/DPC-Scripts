@@ -1,4 +1,4 @@
-﻿<# v1.0.6
+﻿<# v1.0.7
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.0.6"
+    $currentVersion = "1.0.7"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -63,6 +63,9 @@ PROCESS {
             if ($tempVersionNumber -gt $currentVersioNumber) {
                 Copy-Item $tempFilePath $PSCommandPath
                 Write-Host Updated install-all.ps1 to $tempVersion -ForegroundColor Green
+
+                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat?token=AFRXBM5AWJ3IEQYIZXMKXRC6WHFGA" -OutFile ($PSScriptRoot + "/runme.bat")
+                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat?token=AFRXBM5DOQ3ILJJJULWW35S6WHFM4" -OutFile ($PSScriptRoot + "/runme-license.bat")
             }
 
             Remove-Item $tempFilePath
