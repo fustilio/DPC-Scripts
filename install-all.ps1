@@ -1,4 +1,4 @@
-﻿<# v1.1.4
+﻿<# v1.1.5
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.1.4"
+    $currentVersion = "1.1.5"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
