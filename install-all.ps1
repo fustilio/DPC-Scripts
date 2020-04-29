@@ -1,4 +1,4 @@
-﻿<# v1.0.8
+﻿<# v1.1.0
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.0.8"
+    $currentVersion = "1.1.0"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -39,30 +39,32 @@ BEGIN {
 
 PROCESS {
 
-    if ($UPDATE) {
+    $currentFilePath = $PSCommandPath
+    $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
+    $runmePath = $PSScriptRoot + "/runme.bat"
+    $runmeLicPath = $PSScriptRoot + "/runme-license.bat"
+    $numbersOnlyPattern = '[^0-9]'
+    $versionOnlyPattern = '[^.0-9]'
 
-        $currentFilePath = $PSCommandPath
-        $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
-        $runmePath = $PSScriptRoot + "/runme.bat"
-        $runmeLicPath = $PSScriptRoot + "/runme-license.bat"
-        $numbersOnlyPattern = '[^0-9]'
-        $versionOnlyPattern = '[^.0-9]'
+    Try {
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/install-all.ps1?token=AFRXBMYU37LJHDRNTPZ4TSS6WF3O4" -OutFile $tempFilePath
+    }
+    Catch {
+        $noUpdate = $true
+    }
 
-        Try {
-            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/install-all.ps1?token=AFRXBMYU37LJHDRNTPZ4TSS6WF3O4" -OutFile $tempFilePath
-        }
-        Catch {
-            Write-Error "Web request failed, check URL?"
-        }
-
-        if (Test-Path ($tempFilePath)) {
+    if (Test-Path ($tempFilePath)) {
     
-            $tempVersion = (Get-Content $tempFilePath -First 1) -replace $versionOnlyPattern, ""
-            $tempVersionNumber = $tempVersion -replace $numbersOnlyPattern, ""
-            $currentVersioNumber = $currentVersion -replace $numbersOnlyPattern, ""
-            Write-Host Latest version is: $tempVersion
-            Write-Host Current Version is: $currentVersion
-            if ($tempVersionNumber -gt $currentVersioNumber) {
+        $tempVersion = (Get-Content $tempFilePath -First 1) -replace $versionOnlyPattern, ""
+        $tempVersionNumber = $tempVersion -replace $numbersOnlyPattern, ""
+        $currentVersioNumber = $currentVersion -replace $numbersOnlyPattern, ""
+        
+        if ($tempVersionNumber -gt $currentVersioNumber) {
+
+            if ($UPDATE) {
+                Write-Host Current Version is: v$currentVersion
+                Write-Host Latest version is: v$tempVersion 
+
                 Copy-Item $tempFilePath $PSCommandPath
                 Write-Host Updated install-all.ps1 to $tempVersion -ForegroundColor Green
 
@@ -91,15 +93,24 @@ PROCESS {
                         Write-Host "Successfully downloaded runme-license.bat"
                     }
                 }
+            } else {
+                Write-Host "Update available, current version is: v$currentVersion." -ForegroundColor Yellow
+                Write-Host "Run update.bat to update." -ForegroundColor Yellow
             }
 
-            Remove-Item $tempFilePath
+            
         }
+
+        Remove-Item $tempFilePath
 
         PAUSE
         EXIT
 
     }
+
+    PAUSE
+
+    ###############################################################################################################################
 
     # Dump useful computer information
     $diskInfo = Get-CimInstance -Class CIM_DiskDrive |
