@@ -1,4 +1,4 @@
-﻿<# v1.1.9
+﻿<# v1.2.0
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.1.9x"
+    $currentVersion = "1.2.0"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -47,7 +47,7 @@ PROCESS {
     $versionOnlyPattern = '[^.0-9]'
 
     Try {
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/install-all.ps1?token=AFRXBMYU37LJHDRNTPZ4TSS6WF3O4" -OutFile $tempFilePath
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/install-all.ps1" -OutFile $tempFilePath
     }
     Catch {
         if ($UPDATE) {
@@ -83,7 +83,7 @@ PROCESS {
 
                 if (-not (Test-Path $runmePath)) {
                     Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat?token=AFRXBM5AWJ3IEQYIZXMKXRC6WHFGA" -OutFile $runmePath
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat" -OutFile $runmePath
                     }
                     Catch {
                         Write-Error "Error downloading runme.bat"
@@ -96,7 +96,7 @@ PROCESS {
 
                 if (-not (Test-Path $runmeLicPath)) {
                     Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat?token=AFRXBM5DOQ3ILJJJULWW35S6WHFM4" -OutFile $runmeLicPath
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat" -OutFile $runmeLicPath
                     } 
                     Catch {
                         Write-Error "Error downloading runme-license.bat"
@@ -109,7 +109,7 @@ PROCESS {
 
                 if (-not (Test-Path $runmeNoClean)) {
                     Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat?token=AFRXBM5SWALR5MENC7EHD6S6WJM34" -OutFile $runmeNoClean
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat" -OutFile $runmeNoClean
                     } 
                     Catch {
                         Write-Error "Error downloading runme-noclean.bat"
