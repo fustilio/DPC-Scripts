@@ -232,8 +232,10 @@ PROCESS {
         }
         
         New-Object PSObject -Property $data | Format-List
-
-        if ($batteryHealth -lt 0.2) {
+        
+        if ($batteryHealth -eq 0) {
+            Write-Host Battery is dead -ForegroundColor Red
+        } elseif ($batteryHealth -lt 0.2) {
             Write-Host Battery is very weak -ForegroundColor Red
         } elseif ($batteryHealth -lt 0.6) {
             Write-Host Battery is weak -ForegroundColor Yellow
