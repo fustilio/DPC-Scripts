@@ -1,4 +1,4 @@
-﻿<# v1.1.5
+﻿<# v1.1.6
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.1.5"
+    $currentVersion = "1.1.6"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -62,9 +62,9 @@ PROCESS {
     
         $tempVersion = (Get-Content $tempFilePath -First 1) -replace $versionOnlyPattern, ""
         $tempVersionNumber = $tempVersion -replace $numbersOnlyPattern, ""
-        $currentVersioNumber = $currentVersion -replace $numbersOnlyPattern, ""
+        $currentVersionNumber = $currentVersion -replace $numbersOnlyPattern, ""
         
-        if ($tempVersionNumber -ge $currentVersioNumber) {
+        if ($tempVersionNumber -ge $currentVersionNumber) {
 
             if ($UPDATE) {
                 Write-Host Current Version is: v$currentVersion
@@ -101,7 +101,7 @@ PROCESS {
 
                 if (-not (Test-Path $runmeNoClean)) {
                     Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat?token=AFRXBM5SWALR5MENC7EHD6S6WJM34" -OutFile $runmeLicPath
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat?token=AFRXBM5SWALR5MENC7EHD6S6WJM34" -OutFile $runmeNoClean
                     } 
                     Catch {
                         Write-Error "Error downloading runme-noclean.bat"
