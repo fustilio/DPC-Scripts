@@ -64,7 +64,7 @@ PROCESS {
         $tempVersionNumber = $tempVersion -replace $numbersOnlyPattern, ""
         $currentVersioNumber = $currentVersion -replace $numbersOnlyPattern, ""
         
-        if ($tempVersionNumber -gt $currentVersioNumber) {
+        if ($tempVersionNumber -ge $currentVersioNumber) {
 
             if ($UPDATE) {
                 Write-Host Current Version is: v$currentVersion
@@ -112,7 +112,7 @@ PROCESS {
                     }
                 }
             } else {
-                Write-Host "Update available, latest version is: v$tempVersion." -ForegroundColor Yellow
+                Write-Host "Latest version is: v$tempVersion." -ForegroundColor Yellow
                 Write-Host "Run update.bat to update." -ForegroundColor Yellow
             }
 
