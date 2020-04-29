@@ -1,4 +1,4 @@
-﻿<# v1.1.6
+﻿<# v1.1.7
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,12 +29,11 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.1.6"
+    $currentVersion = "1.1.7"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
-    
-
+ 
 }
 
 PROCESS {
@@ -70,8 +69,17 @@ PROCESS {
                 Write-Host Current Version is: v$currentVersion
                 Write-Host Latest version is: v$tempVersion 
 
-                Copy-Item $tempFilePath $PSCommandPath
-                Write-Host Updated install-all.ps1 to $tempVersion -ForegroundColor Green
+                if ($tempVersionNumber -ne $currentVersionNumber) {
+                    Copy-Item $tempFilePath $PSCommandPath
+                    Write-Host Updated install-all.ps1 to $tempVersion -ForegroundColor Green
+
+                    Write-Host Executing update again to download other files
+                    Powershell -Command "$PSCommandPath -UPDATE"
+                }
+
+
+                Write-Host Downloading other files..
+                
 
                 if (-not (Test-Path $runmePath)) {
                     Try {
