@@ -108,7 +108,10 @@ PROCESS {
         Remove-Item $tempFilePath
 
         PAUSE
-        EXIT
+        
+        if ($UPDATE) {
+            EXIT
+        }
 
     }
 
