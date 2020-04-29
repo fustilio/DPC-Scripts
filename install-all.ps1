@@ -1,4 +1,4 @@
-﻿<# v1.1.8
+﻿<# v1.1.9
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,7 +29,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.1.8"
+    $currentVersion = "1.1.9x"
     $currentVersionDate = "29/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -218,8 +218,12 @@ PROCESS {
 
     If ($Report.Status -ne "NotPresent")
     {
-
-        $batteryHealth = $Report.FullChargeCapacityInMilliwattHours / $Report.DesignCapacityInMilliwattHours
+        
+        if ($Report.DesignCapacityInMilliwattHours -ne 0) {
+            $batteryHealth = $Report.FullChargeCapacityInMilliwattHours / $Report.DesignCapacityInMilliwattHours
+        } else {
+            $batteryHealth = 0
+        }
 
         $data = @{
             Status = $Report.Status
