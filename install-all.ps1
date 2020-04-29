@@ -43,6 +43,7 @@ PROCESS {
     $tempFilePath = $PSScriptRoot + "/install-all-temp.ps1"
     $runmePath = $PSScriptRoot + "/runme.bat"
     $runmeLicPath = $PSScriptRoot + "/runme-license.bat"
+    $runmeNoClean = $PSScriptRoot + "/runme-noclean.bat"
     $numbersOnlyPattern = '[^0-9]'
     $versionOnlyPattern = '[^.0-9]'
 
@@ -95,6 +96,19 @@ PROCESS {
 
                     if (Test-Path $runmeLicPath) {
                         Write-Host "Successfully downloaded runme-license.bat"
+                    }
+                }
+
+                if (-not (Test-Path $runmeNoClean)) {
+                    Try {
+                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat?token=AFRXBM5SWALR5MENC7EHD6S6WJM34" -OutFile $runmeLicPath
+                    } 
+                    Catch {
+                        Write-Error "Error downloading runme-noclean.bat"
+                    }
+
+                    if (Test-Path $runmeNoClean) {
+                        Write-Host "Successfully downloaded runme-noclean.bat"
                     }
                 }
             } else {
