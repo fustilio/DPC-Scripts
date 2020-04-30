@@ -1,4 +1,4 @@
-﻿<# v1.2.2
+﻿<# v1.2.3
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -24,13 +24,15 @@ Param(
     [switch] $CLEANUP = $false,
     [Parameter(ParameterSetName="update")]
     [Alias('u','upd')]
-    [switch] $UPDATE = $false
+    [switch] $UPDATE = $false,
+    [Alias('q','QC')]
+    [switch] $CHECK = $false
 )
 
 BEGIN {
 
-    $currentVersion = "1.2.2"
-    $currentVersionDate = "30/04/2020"
+    $currentVersion = "1.2.3"
+    $currentVersionDate = "01/05/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
  
@@ -358,17 +360,15 @@ PROCESS {
                 )
                 Write-Host Installing: $fullPath
                 $proc = Start-Process "msiexec.exe" -ArgumentList $MSIArguments -PassThru -Wait #-NoNewWindow
-                if ($proc.ExitCode -eq 0) {
-                    Write-Host Successfully Installed: $fullPath -ForegroundColor Green
-                } else {
-                    switch($proc.ExitCode) {
-                        1602 { Write-Host Error: $proc.ExitCode "User cancelled installation" -ForegroundColor Red; break }
-                        1603 { Write-Host Error: $proc.ExitCode "Fatal error during installation" -ForegroundColor Red; break }
-                        1639 { Write-Host Error: $proc.ExitCode "Invalid command line argument, check folder structure" -ForegroundColor Red; break }
-                        default { Write-Host Error: $proc.ExitCode -ForegroundColor Red }                     
-                    }
+                switch($proc.ExitCode) {
+                    0    { Write-Host Successfully Installed: $fullPath -ForegroundColor Green; break }
+                    1602 { Write-Host Error: $proc.ExitCode "User cancelled installation" -ForegroundColor Red; break }
+                    1603 { Write-Host Error: $proc.ExitCode "Fatal error during installation" -ForegroundColor Red; break }
+                    1639 { Write-Host Error: $proc.ExitCode "Invalid command line argument, check folder structure" -ForegroundColor Red; break }
+                    3010 { Write-Host "Successfully Installed, restart required." -ForegroundColor Yellow; break }
+                    default { Write-Host Error: $proc.ExitCode -ForegroundColor Red }                     
                 }
-	
+                	
             } elseif ($extn -eq ".msp") {
                 New-Item -ItemType File -Force -Path $logFilePath | Out-Null
                 $MSIArguments = @(
@@ -381,15 +381,13 @@ PROCESS {
                 )
                 Write-Host Installing: $fullPath
                 $proc = Start-Process "msiexec.exe" -ArgumentList $MSIArguments -PassThru -Wait #-NoNewWindow
-                if ($proc.ExitCode -eq 0) {
-                    Write-Host Successfully Installed: $fullPath -ForegroundColor Green
-                } else {
-                    switch($proc.ExitCode) {
-                        1602 { Write-Host Error: $proc.ExitCode "User cancelled installation" -ForegroundColor Red; break }
-                        1603 { Write-Host Error: $proc.ExitCode "Fatal error during installation" -ForegroundColor Red; break }
-                        1639 { Write-Host Error: $proc.ExitCode "Invalid command line argument, check folder structure" -ForegroundColor Red; break }
-                        default { Write-Host Error: $proc.ExitCode -ForegroundColor Red }                     
-                    }
+                switch($proc.ExitCode) {
+                    0    { Write-Host Successfully Installed: $fullPath -ForegroundColor Green; break }
+                    1602 { Write-Host Error: $proc.ExitCode "User cancelled installation" -ForegroundColor Red; break }
+                    1603 { Write-Host Error: $proc.ExitCode "Fatal error during installation" -ForegroundColor Red; break }
+                    1639 { Write-Host Error: $proc.ExitCode "Invalid command line argument, check folder structure" -ForegroundColor Red; break }
+                    3010 { Write-Host "Successfully Installed, restart required." -ForegroundColor Yellow; break }
+                    default { Write-Host Error: $proc.ExitCode -ForegroundColor Red }                     
                 }
             } elseif ($filePath -eq "Office\setup.exe") {
                 $dir = [IO.Path]::GetDirectoryName($fullPath)
@@ -440,6 +438,155 @@ PROCESS {
             Write-Host No Network Detected -ForegroundColor Red
             Write-Host Update Windows Defender when internet connection is available. -ForegroundColor Red
         }
+    }
+
+    ###############################################################################################################################
+    # QC STUFF
+
+    Filter findActivePath {
+        if (Test-Path $_) {
+            $_
+        }
+    }
+
+
+    if ($CHECK) {
+        Write-Host Running QC Checks
+
+        #kill all known programs for testing
+
+        $processList = @("chrome", "AcroRd32", "soffice", "zoom")
+
+        ForEach ($_ in $processList) {
+            $proc = Get-Process $_ -ErrorAction SilentlyContinue
+            if ($proc) { 
+                $proc.CloseMainWindow()
+                Sleep 5
+                if (!$proc.HasExited) {
+                    $proc | Stop-Process -Force | Out-Null
+                }
+            }
+        }
+
+        $counter = 0
+
+  
+        Write-Host "Starting SW Test 1/5 - Chrome..."
+        $list = @("C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", "C:\Program Files\Google\Chrome\Application\chrome.exe")
+        $testProgram = $list | findActivePath | Select -First 1
+        If ($testProgram) {
+            Start-Process $testProgram
+            Start-Sleep 3
+            Write-Host "SW Test Passed. Chrome started." -ForegroundColor green
+            $counter++
+        } else {
+            Write-Host "Chrome is not installed or does not exist in the standard location." -ForegroundColor red
+        }
+        "`n"
+
+        Write-Host "Starting SW Test 2/5 - Acrobat..."
+        $list = @("C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
+        $testProgram = $list | findActivePath | Select -First 1
+        If ($testProgram) {
+            Start-Process $testProgram
+            Start-Sleep 3
+            Write-Host "SW Test Passed. Acrobat started." -ForegroundColor green
+            $counter++
+        } else {
+            Write-Host "Acrobat is not installed or does not exist in the standard location." -ForegroundColor red
+        }
+        "`n"
+
+        Write-Host "Starting SW Test 3/5 - LibreOffice..."
+        $list = @("C:\Program Files\LibreOffice\program\soffice.exe")
+        $testProgram = $list | findActivePath | Select -First 1
+        if ($testProgram) {
+            Start-Process "C:\Program Files\LibreOffice\program\soffice.exe"
+            Start-Sleep 5
+            Write-Host "SW Test Passed. LibreOffice started." -ForegroundColor green
+            $counter++
+            
+        } else {
+            Write-Host "LibreOffice is not installed or does not exist in the standard location." -ForegroundColor red
+        }
+        "`n"
+
+
+        do {
+            $ping = Test-NetConnection
+            $pingResult = $ping.PingSucceeded
+            Write-Host "Please connect to WiFi manually before we can continue." -ForegroundColor green
+        }
+        while ($pingResult -eq $false) {
+            $ping = Test-NetConnection
+            $pingResult = $ping.PingSucceeded
+        }
+
+        Write-Host "Starting SW Test 4/5 - Joining Zoom Meeting..."
+        $ZoomAppDataPath =  [Environment]::GetFolderPath('ApplicationData') + "\Zoom\bin\Zoom.exe";
+        $list = @("C:\Program Files (x86)\Zoom\bin\Zoom.exe", $ZoomAppDataPath);
+        $testProgram = $list | findActivePath | Select -First 1
+        If ($testProgram) {
+            Start-Process "zoommtg://zoom.us/join?confno=3966517262&zc=0&uname=User"
+            Start-Sleep 5
+            Write-Host "SW Test Passed. Zoom started." -ForegroundColor green
+            $counter++
+        } else {
+            Write-Host "Zoom is not installed or does not exist in the standard location." -ForegroundColor red
+        }
+   
+        "`n"
+
+        Start-Sleep 5
+
+
+        Write-Host "Starting SW Test 5/5 Copying Joseph Schooling Video to Desktop..."
+        Set-Location $PSScriptRoot
+        $DesktopPath = [Environment]::GetFolderPath("Desktop")
+        Copy-Item "Team Singapore Surprise.mp4" -Destination $DesktopPath
+        $VidPath = Join-Path -Path $DesktopPath -ChildPath "\Team Singapore Surprise.mp4"
+        $testProgram = Test-Path $VidPath
+        If (Test-Path $VidPath) {
+            Start-Process $VidPath
+            Start-Sleep 5
+            Write-Host "SW Test Passed. Joseph Schooling Video played." -ForegroundColor green
+            $counter++
+        else {
+            Write-Host "Joseph Schooling Video is not found on Desktop. Please copy it manually." -ForegroundColor red}
+        }
+        "`n"
+
+    
+        $list = @("C:\Program Files\Microsoft Office\Office16", "C:\Program Files (x86)\Microsoft Office\Office16");
+        $testProgram = $list | findActivePath | Select -First 1
+
+        If ($testProgram) {
+            Set-Location $testProgram
+        } else {
+            Write-Host "Office is not installed."
+        }
+
+        $officeActivation = cscript ospp.vbs /dstatus
+        If ($officeActivation -match "---LICENSED---"){
+            Write-host "Office is activated." -ForegroundColor green
+        } else {
+            Write-Host "Office is not activated." -Foreground red
+        }
+        "`n"
+
+        slmgr /xpr
+        Write-host "See pop up for Windows Activation status."
+
+
+        "`n"
+        If ($counter -eq 5) {
+            Write-Host "QC Software passed." -ForegroundColor green
+        } else {
+             Write-Host "QC Software failed. Please review the log to find what failed." -Foreground red
+        }
+
+        "`n"
+
     }
 
     ###############################################################################################################################
