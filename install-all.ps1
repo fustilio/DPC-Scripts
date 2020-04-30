@@ -48,6 +48,21 @@ PROCESS {
     $numbersOnlyPattern = '[^0-9]'
     $versionOnlyPattern = '[^.0-9]'
 
+    $downloadList = @(
+        @{
+            path=$PSScriptRoot + "/runme.bat";
+            uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat";
+        },
+        @{
+            path=$PSScriptRoot + "/runme-license.bat";
+            uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat";
+        },
+        @{
+            path=$PSScriptRoot + "/runme-noclean.bat";
+            uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat"
+        }
+    )
+
     Try {
         Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/install-all.ps1" -OutFile $tempFilePath
     }
@@ -82,45 +97,21 @@ PROCESS {
 
                 Write-Host Downloading other files..
                 
-
-                if (-not (Test-Path $runmePath)) {
+                ForEach ($_ in $downloadList) {
+                    
                     Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat" -OutFile $runmePath
+                        Invoke-WebRequest -Uri $_.uri -OutFile $_.path
                     }
                     Catch {
                         Write-Error "Error downloading runme.bat"
                     }
 
-                    if (Test-Path $runmePath) {
+                    if (Test-Path $_.path) {
                         Write-Host "Successfully downloaded runme.bat"
                     }
+
                 }
 
-                if (-not (Test-Path $runmeLicPath)) {
-                    Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat" -OutFile $runmeLicPath
-                    } 
-                    Catch {
-                        Write-Error "Error downloading runme-license.bat"
-                    }
-
-                    if (Test-Path $runmeLicPath) {
-                        Write-Host "Successfully downloaded runme-license.bat"
-                    }
-                }
-
-                if (-not (Test-Path $runmeNoClean)) {
-                    Try {
-                        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat" -OutFile $runmeNoClean
-                    } 
-                    Catch {
-                        Write-Error "Error downloading runme-noclean.bat"
-                    }
-
-                    if (Test-Path $runmeNoClean) {
-                        Write-Host "Successfully downloaded runme-noclean.bat"
-                    }
-                }
             } else {
                 Write-Host "Latest version is: v$tempVersion." -ForegroundColor Yellow
                 Write-Host "Run update.bat to update." -ForegroundColor Yellow
