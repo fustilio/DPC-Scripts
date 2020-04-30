@@ -1,4 +1,4 @@
-﻿<# v1.2.0
+﻿<# v1.2.1
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -29,8 +29,8 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.2.0"
-    $currentVersionDate = "29/04/2020"
+    $currentVersion = "1.2.1"
+    $currentVersionDate = "30/04/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
  
@@ -570,7 +570,25 @@ PROCESS {
 
     }
 
+    ###############################################################################################################################
 
+    $title = "Remove Wifi profiles?"
+    $question = "Would you like to remove all Wifi profiles on this machine?"
+
+    $choices = "&Yes", "&No"
+
+    $decision = $Host.UI.PromptForChoice($title, $question, $choices, 0)
+
+
+    if ($decision -eq 0) 
+    {
+        netsh wlan delete profile name=* i=*
+        Write-Host "Wifi profiles deleted" -ForegroundColor Green
+    } 
+    else 
+    {
+        Write-Host "WiFi profiles unchanged" -ForegroundColor Yellow
+    }
 
 }
 
