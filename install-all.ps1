@@ -1,4 +1,4 @@
-﻿<# v1.3.0
+﻿<# v1.3.1
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -31,7 +31,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.3.0"
+    $currentVersion = "1.3.1"
     $currentVersionDate = "01/05/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -472,7 +472,7 @@ PROCESS {
         Write-Host "Starting SW Test 1/5 - Chrome..."
         $list = @("C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", "C:\Program Files\Google\Chrome\Application\chrome.exe")
         $testProgram = $list | findActivePath | Select -First 1
-        If (Test-Path$testProgram) {
+        If (Test-Path $testProgram) {
             Start-Process $testProgram
             Start-Sleep 3
             Write-Host "SW Test Passed. Chrome started." -ForegroundColor green
@@ -557,7 +557,7 @@ PROCESS {
         $list = @("C:\Program Files\Microsoft Office\Office16", "C:\Program Files (x86)\Microsoft Office\Office16");
         $testProgram = $list | findActivePath | Select -First 1
 
-        If ($testProgram) {
+        If (Test-Path $testProgram) {
             Set-Location $testProgram
         } else {
             Write-Host "Office is not installed."
