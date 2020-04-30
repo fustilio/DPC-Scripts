@@ -1,4 +1,4 @@
-﻿<# v1.2.5
+﻿<# v1.2.6
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -31,7 +31,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.2.5"
+    $currentVersion = "1.2.6"
     $currentVersionDate = "01/05/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -50,18 +50,22 @@ PROCESS {
 
     $downloadList = @(
         @{
+            name="runme.bat";
             path=$PSScriptRoot + "/runme.bat";
             uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme.bat";
         },
         @{
+            name="runme-license.bat";
             path=$PSScriptRoot + "/runme-license.bat";
             uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-license.bat";
         },
         @{
+            name="runme-noclean.bat";
             path=$PSScriptRoot + "/runme-noclean.bat";
             uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean.bat"
         },
         @{
+            name="runme-noclean-qc.bat";
             path=$PSScriptRoot + "/runme-noclean-qc.bat";
             uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean-qc.bat"
         }
@@ -108,11 +112,11 @@ PROCESS {
                         Invoke-WebRequest -Uri $_.uri -OutFile $_.path
                     }
                     Catch {
-                        Write-Error "Error downloading runme.bat"
+                        Write-Error Error downloading $_.name
                     }
 
                     if (Test-Path $_.path) {
-                        Write-Host "Successfully downloaded runme.bat"
+                        Write-Host Successfully downloaded $_.name
                     }
 
                 }
