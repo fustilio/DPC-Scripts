@@ -1,4 +1,4 @@
-﻿<# v1.2.9
+﻿<# v1.3.0
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -31,7 +31,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.2.9"
+    $currentVersion = "1.3.0"
     $currentVersionDate = "01/05/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -472,7 +472,7 @@ PROCESS {
         Write-Host "Starting SW Test 1/5 - Chrome..."
         $list = @("C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", "C:\Program Files\Google\Chrome\Application\chrome.exe")
         $testProgram = $list | findActivePath | Select -First 1
-        If ($testProgram) {
+        If (Test-Path$testProgram) {
             Start-Process $testProgram
             Start-Sleep 3
             Write-Host "SW Test Passed. Chrome started." -ForegroundColor green
@@ -485,7 +485,7 @@ PROCESS {
         Write-Host "Starting SW Test 2/5 - Acrobat..."
         $list = @("C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
         $testProgram = $list | findActivePath | Select -First 1
-        If ($testProgram) {
+        If (Test-Path $testProgram) {
             Start-Process $testProgram
             Start-Sleep 3
             Write-Host "SW Test Passed. Acrobat started." -ForegroundColor green
@@ -498,7 +498,7 @@ PROCESS {
         Write-Host "Starting SW Test 3/5 - LibreOffice..."
         $list = @("C:\Program Files\LibreOffice\program\soffice.exe")
         $testProgram = $list | findActivePath | Select -First 1
-        if ($testProgram) {
+        if (Test-Path $testProgram) {
             Start-Process "C:\Program Files\LibreOffice\program\soffice.exe"
             Start-Sleep 5
             Write-Host "SW Test Passed. LibreOffice started." -ForegroundColor green
@@ -521,10 +521,10 @@ PROCESS {
         }
 
         Write-Host "Starting SW Test 4/5 - Joining Zoom Meeting..."
-        $ZoomAppDataPath =  [Environment]::GetFolderPath('ApplicationData') + "\Zoom\bin\Zoom.exe";
-        $list = @("C:\Program Files (x86)\Zoom\bin\Zoom.exe", $ZoomAppDataPath);
+        $ZoomAppDataPath =  [Environment]::GetFolderPath('ApplicationData') + "\Zoom\bin\Zoom.exe"
+        $list = @("C:\Program Files (x86)\Zoom\bin\Zoom.exe", $ZoomAppDataPath)
         $testProgram = $list | findActivePath | Select -First 1
-        If ($testProgram) {
+        If (Test-Path $testProgram) {
             Start-Process "zoommtg://zoom.us/join?confno=3966517262&zc=0&uname=User"
             Start-Sleep 5
             Write-Host "SW Test Passed. Zoom started." -ForegroundColor green
@@ -549,7 +549,7 @@ PROCESS {
             Write-Host "SW Test Passed. Joseph Schooling Video played." -ForegroundColor green
             $counter++
         } else {
-            Write-Host "Joseph Schooling Video is not found on Desktop. Please copy it manually." -ForegroundColor red}
+            Write-Host "Joseph Schooling Video is not found on Desktop. Please copy it manually." -ForegroundColor red
         }
         "`n"
 
