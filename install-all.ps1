@@ -1,4 +1,4 @@
-﻿<# v1.2.7
+﻿<# v1.2.8
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -31,7 +31,7 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.2.7"
+    $currentVersion = "1.2.8"
     $currentVersionDate = "01/05/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
@@ -541,9 +541,8 @@ PROCESS {
         Write-Host "Starting SW Test 5/5 Copying Joseph Schooling Video to Desktop..."
         Set-Location $PSScriptRoot
         $DesktopPath = [Environment]::GetFolderPath("Desktop")
-        Copy-Item "Team Singapore Surprise.mp4" -Destination $DesktopPath
+        Copy-Item "Team Singapore Surprise.mp4" -Destination $DesktopPath | Out-Null
         $VidPath = Join-Path -Path $DesktopPath -ChildPath "\Team Singapore Surprise.mp4"
-        $testProgram = Test-Path $VidPath
         If (Test-Path $VidPath) {
             Start-Process $VidPath
             Start-Sleep 5
