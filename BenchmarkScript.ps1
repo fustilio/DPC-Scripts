@@ -23,15 +23,20 @@ if (Test-Path $PCMarkPath) {
         $url = "https://benchmarks.ul.com/downloads/pcmark10-professional.zip"
         $tempFilePath = "$PSScriptRoot\pcmark10-professional_temp.zip"
 
-        Start-BitsTransfer $url $tempFilePath
+        #Start-BitsTransfer $url $tempFilePath
+
+
+        Write-Host "Zip file downloaded, unpacking.." -ForegroundColor Yellow
 
         Expand-Archive -Path $tempFilePath -DestinationPath $PCMarkPath
+
+        Write-Host "Unpack complete." -ForegroundColor Green
     } catch {
         Write-Error Downloading PCMark10 files failed.
     }
-
-
 }
+
+"`n"
 
 $configPath = "$PSScriptRoot\config.xml"
 $tokenKeys = @("refresh_token",
