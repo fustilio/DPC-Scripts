@@ -1,4 +1,4 @@
-﻿<# v1.3.2
+﻿<# v1.4.0
 .Description
 This script installs the applications listed in msi_list.txt sequentially.
 Requires input to -Source parameter
@@ -31,8 +31,8 @@ Param(
 
 BEGIN {
 
-    $currentVersion = "1.3.2"
-    $currentVersionDate = "01/05/2020"
+    $currentVersion = "1.4.0"
+    $currentVersionDate = "09/08/2020"
     Write-Host Hello there! This is the DPC software install script! -ForegroundColor Yellow
     Write-Host "Current version of the script is v$currentVersion last updated on $currentVersionDate." -ForegroundColor Yellow
  
@@ -68,6 +68,16 @@ PROCESS {
             name="runme-noclean-qc.bat";
             path=$PSScriptRoot + "/runme-noclean-qc.bat";
             uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/runme-noclean-qc.bat"
+        },
+        @{
+            name="Benchmark.bat";
+            path=$PSScriptRoot + "/Benchmark.bat";
+            uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/Benchmark.bat"
+        },
+        @{
+            name="BenchmarkScript.ps1";
+            path=$PSScriptRoot + "/BenchmarkScript.ps1";
+            uri="https://raw.githubusercontent.com/fustilio/DPC-Scripts/master/BenchmarkScript.ps1"
         }
 
     )

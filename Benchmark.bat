@@ -1,0 +1,1 @@
+Powershell -NoProfile -ExecutionPolicy Bypass -Command "& {Start-Process Powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File ""%~dp0BenchmarkScript.ps1""' -Verb RunAs}"
