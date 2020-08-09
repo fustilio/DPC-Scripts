@@ -23,7 +23,7 @@ if (Test-Path $PCMarkPath) {
         $url = "https://benchmarks.ul.com/downloads/pcmark10-professional.zip"
         $tempFilePath = "$PSScriptRoot\pcmark10-professional_temp.zip"
 
-        #Start-BitsTransfer $url $tempFilePath
+        Start-BitsTransfer $url $tempFilePath
 
 
         Write-Host "Zip file downloaded, unpacking.." -ForegroundColor Yellow
