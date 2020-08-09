@@ -1,0 +1,7 @@
+<config>
+  <refresh_token>INSERT_REFRESH_TOKEN_HERE</refresh_token>
+  <client_id>INSERT_CLIENT_ID_HERE</client_id>
+  <client_secret>INSERT_CLIENT_SECRET_HERE</client_secret>
+  <upload_folder>INSERT_UPLOAD_FOLDER_HERE</upload_folder>
+  <drive_id>INSERT_DRIVE_ID_HERE</drive_id>
+</config>
